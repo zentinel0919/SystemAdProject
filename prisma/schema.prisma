@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mongodb"
-  url      = "mongodb+srv://harvey:natividad@cluster0.xcod1uv.mongodb.net/test"
+  url      = "mongodb+srv://harvey:natividad@cluster0.xcod1uv.mongodb.net/systemad"
 }
 
 model User {
@@ -27,7 +27,7 @@ model Book {
   author       String
   description  String
   genre        String
-  image        String
+  image        String?
 
   favoritedBy  FavoriteBook[]
 }

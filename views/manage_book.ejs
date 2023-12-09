@@ -186,8 +186,8 @@ h3 {
     }
 
 .book-image {
-  width: 100px; /* Adjust the width as desired */
-  height: 100px; /* Adjust the height as desired */
+  width: auto; /* Adjust the width as desired */
+  height: 10rem; /* Adjust the height as desired */
 }
 
 .book-image img {
@@ -371,7 +371,7 @@ h3 {
         <% books.forEach(function(book) { %>
           <div class="book-item">
             <div class="book-image">
-              <img src="/assets/images/<%= book.image %>" alt="Book Image">
+              <img src="<%= book.image %>" alt="Book Image">
             </div>
             <div class="book-info">
               <p class="book-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -496,27 +496,32 @@ h3 {
     }
   }
 
-      $(document).ready(function() {
-      // Add Book Form Submission
-      $('#add-book-form').submit(function(event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        
-        // Make AJAX request to add book
-        $.ajax({
-          type: 'POST',
-          url: '/admin/book/add',
-          data: formData,
-          success: function(response) {
-            // Handle success response
-            console.log(response);
-          },
-          error: function(error) {
-            // Handle error response
-            console.log(error);
-          }
-        });
-      });
+  $(document).ready(function () {
+  // Add Book Form Submission
+  $('#add-book-form').submit(function (event) {
+    event.preventDefault();
+
+    // Create a FormData object to handle files
+    var formData = new FormData(this);
+
+    // Make AJAX request to add book
+    $.ajax({
+      type: 'POST',
+      url: '/admin/book/add',
+      data: formData,
+      contentType: false, // Don't set content type (automatically set by FormData)
+      processData: false, // Don't process the data (already FormData)
+      success: function (response) {
+        // Handle success response
+        console.log(response);
+      },
+      error: function (error) {
+        // Handle error response
+        console.log(error);
+      }
+    });
+  });
+
 
 
 

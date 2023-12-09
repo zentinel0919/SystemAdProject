@@ -9,14 +9,14 @@ var MongoStore = require('connect-mongo')(session);
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const multer = require('multer');
-const upload = multer({ dest: path.join(__dirname, 'views', 'assets', 'images') });
+const bookUpload = multer({ dest: path.join(__dirname, 'views', 'assets', 'bookStorage') });
 
 app.use(session({
   secret: 'kahitano',
   resave: true,
   saveUninitialized: false,
   store: new MongoStore({ 
-    url: 'mongodb+srv://harvey:natividad@cluster0.xcod1uv.mongodb.net/test', // Replace with your MongoDB connection string
+    url: 'mongodb+srv://harvey:natividad@cluster0.xcod1uv.mongodb.net/systemad', // Replace with your MongoDB connection string
     collectionName: 'sessions',
     ttl: 60 * 60, // Session TTL (optional)
     client: prisma, // Prisma instance (optional)
@@ -42,11 +42,11 @@ app.use(function (req, res, next) {
 });
 
 
-app.post('/admin/book/add', upload.single('image'), (req, res) => {
+app.post('/admin/book/add', bookUpload.single('image'), (req, res) => {
   res.status(200).send('Book added successfully!');
 });
 
-app.post('/admin/book/edit/:bookId', upload.single('image'), (req, res) => {
+app.post('/admin/book/edit/:bookId', bookUpload.single('image'), (req, res) => {
   const bookId = req.params.bookId;
   res.status(200).send(`Book ${bookId} edited successfully!`);
 });

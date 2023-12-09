@@ -17,19 +17,28 @@ const registrationSchema = Joi.object({
   gender: Joi.string().allow('', null),
 });
 
-const storage = multer.diskStorage({
+const fs = require('fs');
+
+const bookStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, 'views', 'assets', 'images'));
+    const dir = path.join(__dirname, '..', 'views', 'assets', 'books');
+    console.log("Trying to save to:", dir); // Log the directory path
+    
+    // Check if directory exists, if not, create it
+    if (!fs.existsSync(dir)){
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    cb(null, dir);
   },
   filename: function (req, file, cb) {
-    // Generate a unique filename by adding a timestamp to the original filename
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const extname = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix + extname);
   },
 });
 
-const upload = multer({ storage: storage });
+const bookUpload = multer({ storage: bookStorage });
 
 
 // Caesar cipher encryption function
@@ -164,7 +173,7 @@ router.get('/admin/book', async function (req, res, next) {
 //ADD BOOK
 const { v4: uuidv4 } = require('uuid');
 
-router.post('/admin/book/add', upload.single('image'), async function (req, res, next) {
+router.post('/admin/book/add', bookUpload.single('image'), async function (req, res, next) {
   try {
     var userId = req.session.userId;
     var data = await prisma.user.findUnique({
@@ -176,10 +185,8 @@ router.post('/admin/book/add', upload.single('image'), async function (req, res,
       res.redirect('/');
     } else {
       var { title, author, genre, description } = req.body;
-      var defaultImage = 'book.png';
-      var image = req.file ? req.file.filename : defaultImage;
+      const image = req.file ? `/assets/books/${req.file.filename}` : null;// Modify this line 
       var bookId = uuidv4(); // Generate a unique ID for the book
-
       var newBook = await prisma.book.create({
         data: {
           id: bookId,
@@ -187,7 +194,7 @@ router.post('/admin/book/add', upload.single('image'), async function (req, res,
           author,
           genre,
           description,
-          image,
+          image
         },
       });
 
@@ -202,7 +209,7 @@ router.post('/admin/book/add', upload.single('image'), async function (req, res,
 
 
 //EDIT BOOK
-router.post('/admin/book/edit/:id', upload.single('image'), async function (req, res, next) {
+router.post('/admin/book/edit/:id', bookUpload.single('image'), async function (req, res, next) {
   var userId = req.session.userId;
   var bookId = req.params.id
   var data = await prisma.user.findUnique({
@@ -215,10 +222,7 @@ router.post('/admin/book/edit/:id', upload.single('image'), async function (req,
   } else {
     var { title, author, genre, description } = req.body;
     var bookId = req.params.id;
-    
-    var defaultImage = 'book.png';
-    var image = req.file ? req.file.filename : defaultImage;
-
+    const image = req.file ? `/assets/books/${req.file.filename}` : null; // Modify this line
     var updatedBook = await prisma.book.update({
       where: {
         id: bookId,

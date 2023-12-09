@@ -161,8 +161,12 @@ h3 {
 }
 
 .book-image {
-  width: 100px; /* Adjust the width as desired */
-  height: 100px; /* Adjust the height as desired */
+  width: auto; /* Adjust the width as desired */
+  height: 10rem; /* Adjust the height as desired */
+}
+
+#removeFavoriteForm{
+  margin: 5%;
 }
 
 #searchInput {
@@ -222,7 +226,7 @@ h3 {
       <% favoriteBooks.forEach(function(favoriteBook) { %>
         <div class="book-item">
           <div class="book-image">
-            <img src="/assets/images/<%= favoriteBook.book.image %>" alt="Book Image">
+            <img src="<%= favoriteBook.book.image %>" alt="Book Image">
           </div>
           <div class="book-info">
             <p class="book-title">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= favoriteBook.book.title %></p>
